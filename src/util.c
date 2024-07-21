@@ -20,12 +20,27 @@ Status parse_status(char *status_str) {
     exit(EXIT_FAILURE);
 }
 
+int validate_date(struct tm time) {
+
+    if (time.tm_year < 2024) return 0;
+    if (time.tm_mon < 1 || time.tm_mon > 12) return 0;
+    if (time.tm_mday < 1 || time.tm_mday > 31) return 0;
+
+    return 1;
+}
+
 struct tm parse_date(char *date_str) {
     struct tm tm = {0};
     if (sscanf(date_str, "%d-%d-%d", &tm.tm_year, &tm.tm_mon, &tm.tm_mday) != 3) {
         fprintf(stderr, "Invalid date format: %s\n", date_str);
         exit(EXIT_FAILURE);
     }
+
+    if (validate_date(tm) == 0){
+        printf("Invlaid Date\n");
+        exit(EXIT_FAILURE);
+    }
+
     tm.tm_year -= 1900;
     tm.tm_mon -= 1;
     return tm;
