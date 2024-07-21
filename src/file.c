@@ -11,9 +11,10 @@ void check_and_update_task_status(Task* tasks, int task_count) {
     for (int i = 0; i < task_count; i++) {
           time_t time = mktime(&tasks[i].due_date);
 
-        if (difftime(time, now) < 0 && (tasks[i].status != 1)) {
+        if (difftime(time, now) < -86399.999999 && (tasks[i].status != 1)) {
             tasks[i].status = 2;
         }
+        printf("%f\n", difftime(time, now));
     }
 }
 
