@@ -29,7 +29,7 @@ typedef struct {
 
 void add_task(Task** tasks, int* task_count, char* title, char* description, Priority priority, struct tm due_date);
 void view_tasks(Task* tasks, int task_count);
-void update_task(Task* tasks, int task_count, int id, Status status);
+void update_task(Task* tasks, int task_count, int id, const char* field, char* value);
 void delete_task(Task** tasks, int* task_count, int id);
 int get_next_id(Task* tasks, int task_count);
 

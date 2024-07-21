@@ -9,7 +9,7 @@ void print_usage() {
     printf("Usage:\n");
     printf("  taskmanager add --title <title> --desc <description> --priority <high|medium|low> --due <YYYY-MM-DD>\n");
     printf("  taskmanager view --all\n");
-    printf("  taskmanager update --id <id> --status <pending|completed|failed>\n");
+    printf("  taskmanager update --id <id> --field <title|description|priority|status|due> --value <valid_input>\n");
     printf("  taskmanager delete --id <id>\n");
 }
 
@@ -65,14 +65,29 @@ int main(int argc, char *argv[]) {
         view_tasks(tasks, task_count);
 
     } else if (strcmp(argv[1], "update") == 0) {
-        if (argc != 6) {
+        if (argc != 8) {
             print_usage();
             return EXIT_FAILURE;
         }
+        
+        char *field = NULL;
+        char *value = NULL;
+        int id;
 
-        int id = atoi(argv[3]);
-        Status status = parse_status(argv[5]);
-        update_task(tasks, task_count, id, status);
+        for (int i = 2; i < argc; i += 2) {
+            if (strcmp(argv[i], "--id") == 0) {
+                id = atoi(argv[i + 1]);
+            } else if (strcmp(argv[i], "--field") == 0) {
+                field = argv[i + 1];
+            } else if (strcmp(argv[i], "--value") == 0) {
+                value = argv[i + 1];
+            } else {
+                print_usage();
+                return EXIT_FAILURE;
+            }
+        }
+
+        update_task(tasks, task_count, id, field, value);
 
     } else if (strcmp(argv[1], "delete") == 0) {
         if (argc != 4) {

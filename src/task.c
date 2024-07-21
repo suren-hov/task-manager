@@ -3,6 +3,7 @@
 #include <string.h>
 #include "../include/task.h"
 #include "../include/file.h"
+#include "../include/util.h"
 
 int get_next_id(Task *tasks, int task_count) {
     int max_id = 0;
@@ -69,16 +70,32 @@ void view_tasks(Task *tasks, int task_count) {
         char due_date_str[20];
         strftime(due_date_str, sizeof(due_date_str), "%Y-%m-%d", &tasks[i].due_date);
 
-        printf("%d. %s [%s] Due: %s Status: %s\n",
-               tasks[i].id, tasks[i].title, priority_str, due_date_str, status_str);
+        printf("%d. %s %s [%s] Due: %s Status: %s\n",
+               tasks[i].id, tasks[i].title, tasks[i].description, priority_str, due_date_str, status_str);
     }
 }
 
 
-void update_task(Task* tasks, int task_count, int id, Status status) {
+void update_task(Task* tasks, int task_count, int id, const char* field, char* value) {
     for (int i = 0; i < task_count; i++) {
         if (tasks[i].id == id) {
-            tasks[i].status = status;
+            if (strcmp(field, "title") == 0) {
+                strncpy(tasks[i].title, value, sizeof(tasks[i].title) - 1);
+                tasks[i].title[sizeof(tasks[i].title) - 1] = '\0';
+            } else if (strcmp(field, "description") == 0) {
+                strncpy(tasks[i].description, value, sizeof(tasks[i].description) - 1);
+                tasks[i].description[sizeof(tasks[i].description) - 1] = '\0';
+            } else if (strcmp(field, "priority") == 0) {
+                tasks[i].priority = parse_priority(value);
+            } else if (strcmp(field, "status") == 0) {
+                tasks[i].status = parse_status(value);
+            } else if (strcmp(field, "due") == 0) {
+                tasks[i].due_date = parse_date(value);
+            } else {
+                printf("Unknown field: %s\n", field);
+                return;
+            }
+
             save_tasks(tasks, task_count);
             printf("Task updated successfully.\n");
             return;
